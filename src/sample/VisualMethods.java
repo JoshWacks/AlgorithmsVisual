@@ -91,10 +91,10 @@ public class VisualMethods {
         float rand3 = random.nextFloat();
         float rand4 = random.nextFloat();
         if (rand4 < 0.5F) {
-            rand4 = (float)((double)rand4 + 0.5D);
+            rand4 = (rand4 + 0.5f);
         }
 
-        Color color = new Color((double)rand1, (double)rand2, (double)rand3, (double)rand4);
+        Color color = new Color(rand1, rand2, rand3, rand4);
         return color;
     }
 }
