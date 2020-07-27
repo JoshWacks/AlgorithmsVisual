@@ -13,4 +13,9 @@ public class SortingRectangles extends Rectangle{//Method to add our own unique 
     public void setColor(Color color) {
         this.color = color;
     }
+
+    @Override
+    public String toString() {
+        return "Xpos: "+getX()+" YPos: "+getY()+" Width: "+getWidth()+" Height: "+getHeight();
+    }
 }

@@ -6,6 +6,8 @@
 package sample;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -24,6 +26,7 @@ public class VisualMethods {
     private static Canvas canvas;
     private static GraphicsContext gc;
     private static ArrayList<SortingRectangles> rectanglesArrayList = new ArrayList();
+    private static Queue<SortingRectangles> sortingRectanglesQueue=new LinkedList<>();
 
     public VisualMethods(double width, double height) {
         canvas = new Canvas(width, height);
@@ -98,6 +101,10 @@ public class VisualMethods {
 
     }
 
+    public void iniQueue(){
+       sortingRectanglesQueue= Algorithms.getQueue();
+    }
+
     private Color getAColor() {
         Random random = new Random();
         float rand1 = random.nextFloat();
@@ -127,7 +134,7 @@ public class VisualMethods {
         }
     }
 
-    public boolean swap(SortingRectangles rect1, SortingRectangles rect2)  {
+    public void swap(SortingRectangles rect1, SortingRectangles rect2)  {
         //TODO make sure we perform swap in the arraylist as well when sorting
 
 
@@ -149,17 +156,16 @@ public class VisualMethods {
 
         final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
-
         Runnable move= () -> {
 
             gc.setFill(rect1.getColor());//We are only moving the one rectangle right here so we only need that colour
             gc.clearRect(tempX1[0],200,rectangleWidth,rect1.getHeight());//clearing
-            tempX1[0] = tempX1[0] +7;//increment
+            tempX1[0] = tempX1[0] +8;//increment
             gc.fillRect(tempX1[0],200,rectangleWidth,rect1.getHeight());//drawing
 
             gc.setFill(rect2.getColor());//We are only moving the one rectangle left here so we only need that colour
             gc.clearRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
-            tempX2[0] = tempX2[0] -7;
+            tempX2[0] = tempX2[0] -8;
             gc.fillRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
 
             if(storeX2<=tempX1[0]){
@@ -181,6 +187,81 @@ public class VisualMethods {
 
 
             }
+            //repaint(rect1,rect2);
+
+
+        };
+
+
+
+        Platform.runLater(() -> {//Method of running on the UI thread
+            executorService.scheduleAtFixedRate(move, 0, 40, TimeUnit.MILLISECONDS);//every 30 milliseconds these methods are run
+
+        });
+        int pos1=rectanglesArrayList.indexOf(rect1);
+        int pos2=rectanglesArrayList.indexOf(rect2);
+        SortingRectangles temp=rectanglesArrayList.get(pos1);
+        rectanglesArrayList.set(pos1,rect2);
+        rectanglesArrayList.set(pos2,temp);//Performs the actual swap in the array
+
+
+    }
+
+    public void showSwaps(){
+        SortingRectangles rect1=sortingRectanglesQueue.remove();
+        SortingRectangles rect2=sortingRectanglesQueue.remove();
+
+        gc.clearRect(rect1.getX(),rect1.getY(),rectangleWidth,rect1.getHeight());
+        gc.clearRect(rect2.getX(),rect2.getY(),rectangleWidth,rect2.getHeight());//first erases the 2 rectangles to be swapped
+
+        gc.setFill(rect1.getColor());
+        rect1.setY(200);
+        gc.fillRect(rect1.getX(),200,rectangleWidth,rect1.getHeight());//redraws them higher
+
+        gc.setFill(rect2.getColor());
+        rect2.setY(200);
+        gc.fillRect(rect2.getX(),200,rectangleWidth,rect2.getHeight());
+
+        double storeX1=rect1.getX();
+        final double[] tempX1 = {storeX1};
+        double storeX2=rect2.getX();
+        final double[] tempX2 = {storeX2};
+
+        final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+
+        Runnable move= () -> {
+
+            gc.setFill(rect1.getColor());//We are only moving the one rectangle right here so we only need that colour
+            gc.clearRect(tempX1[0],200,rectangleWidth,rect1.getHeight());//clearing
+            tempX1[0] = tempX1[0] +1;//increment
+            gc.fillRect(tempX1[0],200,rectangleWidth,rect1.getHeight());//drawing
+
+            gc.setFill(rect2.getColor());//We are only moving the one rectangle left here so we only need that colour
+            gc.clearRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
+            tempX2[0] = tempX2[0] -1;
+            gc.fillRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
+
+            if(storeX2<=tempX1[0]){
+
+
+
+
+                executorService.shutdown();
+                gc.clearRect(tempX1[0],200,rectangleWidth,rect1.getHeight());
+                rect1.setX(storeX2);
+                rect1.setY(canvas.getHeight()-rect1.getHeight());//Places the rectangle back on the base
+                gc.setFill(rect1.getColor());
+                gc.fillRect(rect1.getX(),rect1.getY(),rectangleWidth,rect1.getHeight());
+
+                gc.clearRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
+                rect2.setX(storeX1);
+                rect2.setY(canvas.getHeight()-rect2.getHeight());//Places the rectangle back on the base
+                gc.setFill(rect2.getColor());
+                gc.fillRect(rect2.getX(),rect2.getY(),rectangleWidth,rect2.getHeight());
+                showSwaps();
+
+
+            }
             repaint(rect1,rect2);
 
 
@@ -189,19 +270,15 @@ public class VisualMethods {
 
 
         Platform.runLater(() -> {//Method of running on the UI thread
-            executorService.scheduleAtFixedRate(move, 0, 30, TimeUnit.MILLISECONDS);//every 5 seconds these methods are run
+            executorService.scheduleAtFixedRate(move, 500, 10, TimeUnit.MILLISECONDS);//every 30 milliseconds these methods are run
 
         });
         int pos1=rectanglesArrayList.indexOf(rect1);
         int pos2=rectanglesArrayList.indexOf(rect2);
         SortingRectangles temp=rectanglesArrayList.get(pos1);
         rectanglesArrayList.set(pos1,rect2);
-        rectanglesArrayList.set(pos2,temp);
+        rectanglesArrayList.set(pos2,temp);//Performs the actual swap in the array
 
-        while(!executorService.isShutdown()){
-
-        }
-        return true;
 
     }
 

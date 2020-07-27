@@ -49,11 +49,14 @@ public class Main extends Application {
         Scene scene = new Scene(pane, width, height);
         primaryStage.setScene(scene);
         primaryStage.show();
+//        vm.swap(rectanglesArrayList.get(2),rectanglesArrayList.get(11));
 
         alg.displayNums();
         alg.bubbleSort();
 
-        alg.displayNums();
+        vm.iniQueue();
+
+        vm.showSwaps();
 
     }
 

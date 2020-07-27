@@ -1,43 +1,51 @@
 package sample;
 
+import javafx.application.Platform;
+
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-public class Algorithms  {
-    private static VisualMethods vm;
+public class Algorithms extends VisualMethods {
 
-    private static ArrayList<SortingRectangles> rectanglesArrayList = new ArrayList();
     private final int arrLength;
-
+    private static ArrayList<SortingRectangles> rectanglesArrayList;
+    private static Queue<SortingRectangles>sortingRectanglesQueue=new LinkedList<>();
     public Algorithms(){
-        Main m=new Main();
-        vm=m.getVm();
+
         rectanglesArrayList=VisualMethods.getRectangles();
         arrLength=rectanglesArrayList.size();
 
     }
 
     public void bubbleSort(){
-
+        SortingRectangles temp;
 
         for(int i=0;i<arrLength;i++){
 
             for(int j=1;j<(arrLength-i);j++){
                 if(rectanglesArrayList.get(j-1).getHeight()>rectanglesArrayList.get(j).getHeight()){
-                    vm.swap(rectanglesArrayList.get(j-1),rectanglesArrayList.get(j));
+                    sortingRectanglesQueue.add(rectanglesArrayList.get(j-1));
+                    sortingRectanglesQueue.add(rectanglesArrayList.get(j));
 
-
-
-//                    while(!vm.swap(rectanglesArrayList.get(j-1),rectanglesArrayList.get(j))){
-//                        System.out.println("Waiting");
-//                    }
-//                    temp=rectanglesArrayList.get(j-1);
-//                    rectanglesArrayList.set(j-1,rectanglesArrayList.get(j));
-//                    rectanglesArrayList.set(j,temp);
+                    temp=rectanglesArrayList.get(j-1);
+                    rectanglesArrayList.set(j-1,rectanglesArrayList.get(j));
+                    rectanglesArrayList.set(j,temp);
 
                 }
             }
         }
     }
+
+    public static Queue<SortingRectangles> getQueue(){
+        return sortingRectanglesQueue;
+    }
+
+
+
     public void displayNums(){
         for(SortingRectangles sr:rectanglesArrayList){
             System.out.print(sr.getHeight()+" ");
