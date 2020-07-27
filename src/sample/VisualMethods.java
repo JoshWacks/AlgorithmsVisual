@@ -15,9 +15,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javafx.application.Platform;
+import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 
 public class VisualMethods {
@@ -25,14 +27,16 @@ public class VisualMethods {
     private static double rectangleWidth;
     private static Canvas canvas;
     private static GraphicsContext gc;
-    private static ArrayList<SortingRectangles> rectanglesArrayList = new ArrayList();
-    private static Queue<SortingRectangles> sortingRectanglesQueue=new LinkedList<>();
+    protected static ArrayList<SortingRectangles> rectanglesArrayList = new ArrayList();
+    protected static Queue<SortingRectangles> sortingRectanglesQueue=new LinkedList<>();
+
 
     public VisualMethods(double width, double height) {
         canvas = new Canvas(width, height);
         gc = canvas.getGraphicsContext2D();
         rectangleWidth = width / (double)numRectangles;
         gc.setLineWidth(1.0D);
+
     }
 
     public VisualMethods(){
@@ -86,14 +90,18 @@ public class VisualMethods {
             int randomHeight = random.nextInt(400) + 50;
             SortingRectangles rect = new SortingRectangles();
 
+
             rect.setX((double)i * rectangleWidth);
             rect.setY(canvas.getHeight() - (double)randomHeight);
             rect.setWidth(rectangleWidth);
-            rect.setHeight((double)randomHeight);
+            rect.setHeight(randomHeight);
+
 
             Color c = this.getAColor();
             rect.setColor(c);
             rectanglesArrayList.add(rect);
+
+            gc.drawImage(null,0,0);
 
             gc.setFill(c);
             gc.fillRect(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
@@ -101,9 +109,7 @@ public class VisualMethods {
 
     }
 
-    public void iniQueue(){
-       sortingRectanglesQueue= Algorithms.getQueue();
-    }
+
 
     private Color getAColor() {
         Random random = new Random();
@@ -119,8 +125,15 @@ public class VisualMethods {
         return color;
     }
 
+    public void drawNumber(String num){
+        gc.setFill(Color.WHITE);
+        switch (num){
+            case "0":
+
+        }
+    }
+
     private void repaint(SortingRectangles rect1,SortingRectangles rect2){//repaints the rectangles during transition
-        //TODO confirm no bufferOverflow here may need optimisation to be only redrawn once
 
         for(SortingRectangles r:rectanglesArrayList){
             if(!(r.equals(rect1)||r.equals(rect2))){//takes in the two rectangles we should never repaint
@@ -134,82 +147,12 @@ public class VisualMethods {
         }
     }
 
-    public void swap(SortingRectangles rect1, SortingRectangles rect2)  {
-        //TODO make sure we perform swap in the arraylist as well when sorting
-
-
-        gc.clearRect(rect1.getX(),rect1.getY(),rect1.getWidth(),rect1.getHeight());
-        gc.clearRect(rect2.getX(),rect2.getY(),rect2.getWidth(),rect2.getHeight());//first erases the 2 rectangles to be swapped
-
-        gc.setFill(rect1.getColor());
-        rect1.setY(200);
-        gc.fillRect(rect1.getX(),200,rect1.getWidth(),rect1.getHeight());//redraws them higher
-
-        gc.setFill(rect2.getColor());
-        rect2.setY(200);
-        gc.fillRect(rect2.getX(),200,rect2.getWidth(),rect2.getHeight());
-
-        double storeX1=rect1.getX();
-        final double[] tempX1 = {storeX1};
-        double storeX2=rect2.getX();
-        final double[] tempX2 = {storeX2};
-
-        final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-
-        Runnable move= () -> {
-
-            gc.setFill(rect1.getColor());//We are only moving the one rectangle right here so we only need that colour
-            gc.clearRect(tempX1[0],200,rectangleWidth,rect1.getHeight());//clearing
-            tempX1[0] = tempX1[0] +8;//increment
-            gc.fillRect(tempX1[0],200,rectangleWidth,rect1.getHeight());//drawing
-
-            gc.setFill(rect2.getColor());//We are only moving the one rectangle left here so we only need that colour
-            gc.clearRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
-            tempX2[0] = tempX2[0] -8;
-            gc.fillRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
-
-            if(storeX2<=tempX1[0]){
-
-                gc.clearRect(tempX1[0],200,rectangleWidth,rect1.getHeight());
-                rect1.setX(storeX2);
-                rect1.setY(canvas.getHeight()-rect1.getHeight());//Places the rectangle back on the base
-                gc.setFill(rect1.getColor());
-                gc.fillRect(rect1.getX(),rect1.getY(),rect1.getWidth(),rect1.getHeight());
-
-                gc.clearRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
-                rect2.setX(storeX1);
-                rect2.setY(canvas.getHeight()-rect2.getHeight());//Places the rectangle back on the base
-                gc.setFill(rect2.getColor());
-                gc.fillRect(rect2.getX(),rect2.getY(),rect2.getWidth(),rect2.getHeight());
-
-
-                executorService.shutdown();
-
-
-            }
-            //repaint(rect1,rect2);
-
-
-        };
-
-
-
-        Platform.runLater(() -> {//Method of running on the UI thread
-            executorService.scheduleAtFixedRate(move, 0, 40, TimeUnit.MILLISECONDS);//every 30 milliseconds these methods are run
-
-        });
-        int pos1=rectanglesArrayList.indexOf(rect1);
-        int pos2=rectanglesArrayList.indexOf(rect2);
-        SortingRectangles temp=rectanglesArrayList.get(pos1);
-        rectanglesArrayList.set(pos1,rect2);
-        rectanglesArrayList.set(pos2,temp);//Performs the actual swap in the array
-
-
-    }
-
     public void showSwaps(){
         SortingRectangles rect1=sortingRectanglesQueue.remove();
         SortingRectangles rect2=sortingRectanglesQueue.remove();
+
+        final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+
 
         gc.clearRect(rect1.getX(),rect1.getY(),rectangleWidth,rect1.getHeight());
         gc.clearRect(rect2.getX(),rect2.getY(),rectangleWidth,rect2.getHeight());//first erases the 2 rectangles to be swapped
@@ -222,12 +165,10 @@ public class VisualMethods {
         rect2.setY(200);
         gc.fillRect(rect2.getX(),200,rectangleWidth,rect2.getHeight());
 
-        double storeX1=rect1.getX();
+        double storeX1=rect1.getX();//We need to store the original x
         final double[] tempX1 = {storeX1};
         double storeX2=rect2.getX();
         final double[] tempX2 = {storeX2};
-
-        final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
         Runnable move= () -> {
 
@@ -242,10 +183,6 @@ public class VisualMethods {
             gc.fillRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
 
             if(storeX2<=tempX1[0]){
-
-
-
-
                 executorService.shutdown();
                 gc.clearRect(tempX1[0],200,rectangleWidth,rect1.getHeight());
                 rect1.setX(storeX2);
@@ -262,15 +199,13 @@ public class VisualMethods {
 
 
             }
-            repaint(rect1,rect2);
+            repaint(rect1,rect2);//repaints all the required the rectangles as we sometimes draw over them
 
 
         };
 
-
-
         Platform.runLater(() -> {//Method of running on the UI thread
-            executorService.scheduleAtFixedRate(move, 500, 10, TimeUnit.MILLISECONDS);//every 30 milliseconds these methods are run
+            executorService.scheduleAtFixedRate(move, 800, 10, TimeUnit.MILLISECONDS);//every 30 milliseconds these methods are run
 
         });
         int pos1=rectanglesArrayList.indexOf(rect1);

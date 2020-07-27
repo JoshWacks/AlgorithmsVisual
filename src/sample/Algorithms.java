@@ -12,11 +12,9 @@ import java.util.concurrent.TimeUnit;
 public class Algorithms extends VisualMethods {
 
     private final int arrLength;
-    private static ArrayList<SortingRectangles> rectanglesArrayList;
-    private static Queue<SortingRectangles>sortingRectanglesQueue=new LinkedList<>();
+
     public Algorithms(){
 
-        rectanglesArrayList=VisualMethods.getRectangles();
         arrLength=rectanglesArrayList.size();
 
     }
@@ -38,12 +36,9 @@ public class Algorithms extends VisualMethods {
                 }
             }
         }
-    }
 
-    public static Queue<SortingRectangles> getQueue(){
-        return sortingRectanglesQueue;
-    }
 
+    }
 
 
     public void displayNums(){

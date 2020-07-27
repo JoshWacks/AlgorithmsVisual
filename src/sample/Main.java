@@ -8,6 +8,7 @@ package sample;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -34,9 +35,7 @@ public class Main extends Application {
         Rectangle2D screenBounds = Screen.getPrimary().getBounds();
         width = screenBounds.getWidth();
         height = screenBounds.getHeight() - 35.0D;
-
-
-
+        Group group=new Group();
         vm = new VisualMethods(width, height);
         vm.initialRectangles();
         rectanglesArrayList=vm.getRectangles();
@@ -46,24 +45,16 @@ public class Main extends Application {
 
         Pane pane = new Pane(canvas);
         pane.setStyle("-fx-background-color: black;");
-        Scene scene = new Scene(pane, width, height);
+
+        group.getChildren().add(pane);
+        Scene scene = new Scene(group, width, height);
         primaryStage.setScene(scene);
         primaryStage.show();
 //        vm.swap(rectanglesArrayList.get(2),rectanglesArrayList.get(11));
-
-        alg.displayNums();
         alg.bubbleSort();
-
-        vm.iniQueue();
-
         vm.showSwaps();
 
     }
-
-    public VisualMethods getVm(){
-        return vm;
-    }
-
     public static void main(String[] args) {
         launch(args);
     }
