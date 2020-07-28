@@ -27,16 +27,18 @@ public class VisualMethods {
     private static double rectangleWidth;
     private static Canvas canvas;
     private static GraphicsContext gc;
+    private static Group group;
+
     protected static ArrayList<SortingRectangles> rectanglesArrayList = new ArrayList();
     protected static Queue<SortingRectangles> sortingRectanglesQueue=new LinkedList<>();
 
 
-    public VisualMethods(double width, double height) {
+    public VisualMethods(double width, double height,Group gr) {
         canvas = new Canvas(width, height);
         gc = canvas.getGraphicsContext2D();
         rectangleWidth = width / (double)numRectangles;
         gc.setLineWidth(1.0D);
-
+        group=gr;
     }
 
     public VisualMethods(){
@@ -90,21 +92,30 @@ public class VisualMethods {
             int randomHeight = random.nextInt(400) + 50;
             SortingRectangles rect = new SortingRectangles();
 
-
             rect.setX((double)i * rectangleWidth);
             rect.setY(canvas.getHeight() - (double)randomHeight);
             rect.setWidth(rectangleWidth);
             rect.setHeight(randomHeight);
 
-
             Color c = this.getAColor();
             rect.setColor(c);
+            Text text=new Text();
+            text.setFill(Color.WHITESMOKE);
+            text.setStyle("-fx-background-color: WHITE;");
+            text.setText(randomHeight+"");
+            rect.setText(text);
+
+            text.setX(rect.getX()+(rectangleWidth/2.0));
+            text.setY(rect.getY()+(rect.getHeight()/2.0));
+
+            group.getChildren().add(text);
+            rect.setText(text);
             rectanglesArrayList.add(rect);
 
-            gc.drawImage(null,0,0);
 
             gc.setFill(c);
             gc.fillRect(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
+
         }
 
     }
@@ -125,13 +136,7 @@ public class VisualMethods {
         return color;
     }
 
-    public void drawNumber(String num){
-        gc.setFill(Color.WHITE);
-        switch (num){
-            case "0":
 
-        }
-    }
 
     private void repaint(SortingRectangles rect1,SortingRectangles rect2){//repaints the rectangles during transition
 

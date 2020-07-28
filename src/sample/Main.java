@@ -14,6 +14,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -35,24 +37,25 @@ public class Main extends Application {
         Rectangle2D screenBounds = Screen.getPrimary().getBounds();
         width = screenBounds.getWidth();
         height = screenBounds.getHeight() - 35.0D;
+
         Group group=new Group();
-        vm = new VisualMethods(width, height);
+
+        vm = new VisualMethods(width, height,group);
         vm.initialRectangles();
         rectanglesArrayList=vm.getRectangles();
         Canvas canvas=vm.getCanvas();
 
         alg=new Algorithms();
 
-        Pane pane = new Pane(canvas);
-        pane.setStyle("-fx-background-color: black;");
-
-        group.getChildren().add(pane);
+        group.getChildren().add(canvas);
         Scene scene = new Scene(group, width, height);
+        scene.setFill(Color.BLACK);
         primaryStage.setScene(scene);
         primaryStage.show();
+
 //        vm.swap(rectanglesArrayList.get(2),rectanglesArrayList.get(11));
-        alg.bubbleSort();
-        vm.showSwaps();
+//        alg.bubbleSort();
+//        vm.showSwaps();
 
     }
     public static void main(String[] args) {
