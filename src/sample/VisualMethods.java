@@ -19,7 +19,9 @@ import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 
 public class VisualMethods {
@@ -99,17 +101,21 @@ public class VisualMethods {
 
             Color c = this.getAColor();
             rect.setColor(c);
+
+
             Text text=new Text();
             text.setFill(Color.WHITESMOKE);
-            text.setStyle("-fx-background-color: WHITE;");
             text.setText(randomHeight+"");
-            rect.setText(text);
+            text.setTextAlignment(TextAlignment.JUSTIFY);
+            text.setFont(new Font(18));
+            text.setX(rect.getX()+(rectangleWidth/2.0)-10);
+            text.setY(rect.getY()-10);
 
-            text.setX(rect.getX()+(rectangleWidth/2.0));
-            text.setY(rect.getY()+(rect.getHeight()/2.0));
 
             group.getChildren().add(text);
             rect.setText(text);
+//            gc.setFill(Color.WHITE);
+//            gc.fillText(randomHeight+"",rect.getX()+(rectangleWidth/2.0),rect.getY()+(rect.getHeight()/2.0));
             rectanglesArrayList.add(rect);
 
 

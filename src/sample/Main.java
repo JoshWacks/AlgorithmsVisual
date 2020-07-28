@@ -13,6 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -53,9 +54,9 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-//        vm.swap(rectanglesArrayList.get(2),rectanglesArrayList.get(11));
-//        alg.bubbleSort();
-//        vm.showSwaps();
+//       vm.swap(rectanglesArrayList.get(2),rectanglesArrayList.get(11));
+        alg.bubbleSort();
+        vm.showSwaps();
 
     }
     public static void main(String[] args) {
