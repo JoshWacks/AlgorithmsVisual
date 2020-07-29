@@ -138,8 +138,7 @@ public class VisualMethods {
             rand4 = (rand4 + 0.5f);
         }
 
-        Color color = new Color(rand1, rand2, rand3, rand4);
-        return color;
+        return new Color(rand1, rand2, rand3, rand4);
     }
 
 
@@ -164,19 +163,21 @@ public class VisualMethods {
 
         final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
-
         gc.clearRect(rect1.getX(),rect1.getY(),rectangleWidth,rect1.getHeight());
         gc.clearRect(rect2.getX(),rect2.getY(),rectangleWidth,rect2.getHeight());//first erases the 2 rectangles to be swapped
 
+        rect1.getText().setY(200-10);
         gc.setFill(rect1.getColor());
         rect1.setY(200);
         gc.fillRect(rect1.getX(),200,rectangleWidth,rect1.getHeight());//redraws them higher
 
+        rect2.getText().setY(200-10);
         gc.setFill(rect2.getColor());
         rect2.setY(200);
         gc.fillRect(rect2.getX(),200,rectangleWidth,rect2.getHeight());
 
-        double storeX1=rect1.getX();//We need to store the original x
+
+        double storeX1=rect1.getX();//We need to store the original x and y
         final double[] tempX1 = {storeX1};
         double storeX2=rect2.getX();
         final double[] tempX2 = {storeX2};
@@ -185,27 +186,34 @@ public class VisualMethods {
 
             gc.setFill(rect1.getColor());//We are only moving the one rectangle right here so we only need that colour
             gc.clearRect(tempX1[0],200,rectangleWidth,rect1.getHeight());//clearing
-            tempX1[0] = tempX1[0] +1;//increment
+            tempX1[0] = tempX1[0] +2;//increment
             gc.fillRect(tempX1[0],200,rectangleWidth,rect1.getHeight());//drawing
+            rect1.getText().setX(tempX1[0]+15);
 
             gc.setFill(rect2.getColor());//We are only moving the one rectangle left here so we only need that colour
             gc.clearRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
-            tempX2[0] = tempX2[0] -1;
+            tempX2[0] = tempX2[0] -2;
             gc.fillRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
+            rect2.getText().setX(tempX2[0]+15);
 
             if(storeX2<=tempX1[0]){
                 executorService.shutdown();
                 gc.clearRect(tempX1[0],200,rectangleWidth,rect1.getHeight());
                 rect1.setX(storeX2);
                 rect1.setY(canvas.getHeight()-rect1.getHeight());//Places the rectangle back on the base
+                rect1.getText().setY(rect1.getY()-10);
                 gc.setFill(rect1.getColor());
                 gc.fillRect(rect1.getX(),rect1.getY(),rectangleWidth,rect1.getHeight());
+
 
                 gc.clearRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
                 rect2.setX(storeX1);
                 rect2.setY(canvas.getHeight()-rect2.getHeight());//Places the rectangle back on the base
+                rect2.getText().setY(rect2.getY()-10);
                 gc.setFill(rect2.getColor());
                 gc.fillRect(rect2.getX(),rect2.getY(),rectangleWidth,rect2.getHeight());
+
+
                 showSwaps();
 
 
@@ -216,7 +224,7 @@ public class VisualMethods {
         };
 
         Platform.runLater(() -> {//Method of running on the UI thread
-            executorService.scheduleAtFixedRate(move, 800, 10, TimeUnit.MILLISECONDS);//every 30 milliseconds these methods are run
+            executorService.scheduleAtFixedRate(move, 1000, 25, TimeUnit.MILLISECONDS);//every 30 milliseconds these methods are run
 
         });
         int pos1=rectanglesArrayList.indexOf(rect1);
