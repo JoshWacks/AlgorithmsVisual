@@ -34,6 +34,9 @@ public class VisualMethods {
     protected static ArrayList<SortingRectangles> rectanglesArrayList = new ArrayList();
     protected static Queue<SortingRectangles> sortingRectanglesQueue=new LinkedList<>();
 
+    private static Config config;
+
+
 
     public VisualMethods(double width, double height,Group gr) {
         canvas = new Canvas(width, height);
@@ -157,24 +160,46 @@ public class VisualMethods {
         }
     }
 
-    public void showSwaps(){
+    private void repaintAll(){//repaints all the rectangles during transition
+//TODO check how we should replace all the text components
+        for(SortingRectangles r:rectanglesArrayList){
+
+            gc.clearRect(r.getX(),r.getY(),rectangleWidth,r.getHeight());
+            gc.setFill(r.getColor());
+            gc.fillRect(r.getX(), r.getY(), r.getWidth(), r.getHeight());//repaints that rectangle
+
+        }
+    }
+
+    private void showSwaps(){
+        //TODO add a slider to control the speed of the swaps
+        final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        if(sortingRectanglesQueue.size()==0){//we are done sorting
+            executorService.shutdown();
+            config.stopTimer();
+        }
+
         SortingRectangles rect1=sortingRectanglesQueue.remove();
         SortingRectangles rect2=sortingRectanglesQueue.remove();
 
-        final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
-        gc.clearRect(rect1.getX(),rect1.getY(),rectangleWidth,rect1.getHeight());
-        gc.clearRect(rect2.getX(),rect2.getY(),rectangleWidth,rect2.getHeight());//first erases the 2 rectangles to be swapped
 
-        rect1.getText().setY(200-10);
-        gc.setFill(rect1.getColor());
-        rect1.setY(200);
-        gc.fillRect(rect1.getX(),200,rectangleWidth,rect1.getHeight());//redraws them higher
+        Platform.runLater(() -> {//Method of running on the UI thread
 
-        rect2.getText().setY(200-10);
-        gc.setFill(rect2.getColor());
-        rect2.setY(200);
-        gc.fillRect(rect2.getX(),200,rectangleWidth,rect2.getHeight());
+            gc.clearRect(rect1.getX(),rect1.getY(),rectangleWidth,rect1.getHeight());
+            gc.clearRect(rect2.getX(),rect2.getY(),rectangleWidth,rect2.getHeight());//first erases the 2 rectangles to be swapped
+
+            rect1.getText().setY(200-10);
+            gc.setFill(rect1.getColor());
+            rect1.setY(200);
+            gc.fillRect(rect1.getX(),200,rectangleWidth,rect1.getHeight());//redraws them higher
+
+            rect2.getText().setY(200-10);
+            gc.setFill(rect2.getColor());
+            rect2.setY(200);
+            gc.fillRect(rect2.getX(),200,rectangleWidth,rect2.getHeight());
+
+        });
 
 
         double storeX1=rect1.getX();//We need to store the original x and y
@@ -186,13 +211,13 @@ public class VisualMethods {
 
             gc.setFill(rect1.getColor());//We are only moving the one rectangle right here so we only need that colour
             gc.clearRect(tempX1[0],200,rectangleWidth,rect1.getHeight());//clearing
-            tempX1[0] = tempX1[0] +2;//increment
+            tempX1[0] = tempX1[0] +2;//increment right
             gc.fillRect(tempX1[0],200,rectangleWidth,rect1.getHeight());//drawing
             rect1.getText().setX(tempX1[0]+15);
 
             gc.setFill(rect2.getColor());//We are only moving the one rectangle left here so we only need that colour
             gc.clearRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
-            tempX2[0] = tempX2[0] -2;
+            tempX2[0] = tempX2[0] -2;//increment left
             gc.fillRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
             rect2.getText().setX(tempX2[0]+15);
 
@@ -213,12 +238,11 @@ public class VisualMethods {
                 gc.setFill(rect2.getColor());
                 gc.fillRect(rect2.getX(),rect2.getY(),rectangleWidth,rect2.getHeight());
 
-
-                showSwaps();
-
+                repaintAll();//repaints all to remove any weird paint changes
+                showSwaps();//recursively does the next set of swaps
 
             }
-            repaint(rect1,rect2);//repaints all the required the rectangles as we sometimes draw over them
+           // repaint(rect1,rect2);//repaints all the required the rectangles as we sometimes draw over them
 
 
         };
@@ -234,6 +258,17 @@ public class VisualMethods {
         rectanglesArrayList.set(pos2,temp);//Performs the actual swap in the array
 
 
+    }
+
+    public void beginSwaps(){
+        config=new Config(group);
+        config.startTimer();//begins the timer here
+        Platform.runLater(() -> {//Method of running on the UI thread
+          config.setTimeOnScreen();
+
+        });
+
+        showSwaps();
     }
 
 }

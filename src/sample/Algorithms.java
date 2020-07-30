@@ -1,14 +1,5 @@
 package sample;
 
-import javafx.application.Platform;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 public class Algorithms extends VisualMethods {
 
     private final int arrLength;

@@ -16,12 +16,15 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Timer;
 
 public class Main extends Application {
     private static double width = 0.0D;
@@ -49,14 +52,16 @@ public class Main extends Application {
         alg=new Algorithms();
 
         group.getChildren().add(canvas);
+
+
         Scene scene = new Scene(group, width, height);
         scene.setFill(Color.BLACK);
         primaryStage.setScene(scene);
         primaryStage.show();
 
-//       vm.swap(rectanglesArrayList.get(2),rectanglesArrayList.get(11));
-        alg.bubbleSort();
-        vm.showSwaps();
+
+        alg.bubbleSort();//does the actual sorting then stores it all in a queue to show the swaps later
+        vm.beginSwaps();
 
     }
     public static void main(String[] args) {
