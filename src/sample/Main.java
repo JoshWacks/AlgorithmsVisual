@@ -54,14 +54,19 @@ public class Main extends Application {
         group.getChildren().add(canvas);
 
 
+
         Scene scene = new Scene(group, width, height);
         scene.setFill(Color.BLACK);
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        alg.insertionSort();
+        Algorithms.setSelectedSort("InsertionSort");
 
-        alg.bubbleSort();//does the actual sorting then stores it all in a queue to show the swaps later
         vm.beginSwaps();
+
+
+
 
     }
     public static void main(String[] args) {

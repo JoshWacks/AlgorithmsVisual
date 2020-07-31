@@ -35,6 +35,7 @@ public class VisualMethods {
     protected static Queue<SortingRectangles> sortingRectanglesQueue=new LinkedList<>();
 
     private static Config config;
+    private static String selectedSort;
 
 
 
@@ -146,7 +147,7 @@ public class VisualMethods {
 
 
 
-    private void repaint(SortingRectangles rect1,SortingRectangles rect2){//repaints the rectangles during transition
+    private void repaint(SortingRectangles rect1,SortingRectangles rect2){//repaints the rectangles during transition as it paints over during transition
 
         for(SortingRectangles r:rectanglesArrayList){
             if(!(r.equals(rect1)||r.equals(rect2))){//takes in the two rectangles we should never repaint
@@ -161,30 +162,32 @@ public class VisualMethods {
     }
 
     private void repaintAll(){//repaints all the rectangles during transition
-//TODO check how we should replace all the text components
         for(SortingRectangles r:rectanglesArrayList){
 
             gc.clearRect(r.getX(),r.getY(),rectangleWidth,r.getHeight());
             gc.setFill(r.getColor());
             gc.fillRect(r.getX(), r.getY(), r.getWidth(), r.getHeight());//repaints that rectangle
 
+            Text text=r.getText();
+            text.setX(r.getX()+(rectangleWidth/2.0)-8);
+            text.setY(r.getY()-10);//sets the text in their correct position as it sometimes floats off, may be because of bufferoverflow exception
+
         }
     }
 
     private void showSwaps(){
         //TODO add a slider to control the speed of the swaps
+
         final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
         if(sortingRectanglesQueue.size()==0){//we are done sorting
             executorService.shutdown();
             config.stopTimer();
         }
-
         SortingRectangles rect1=sortingRectanglesQueue.remove();
         SortingRectangles rect2=sortingRectanglesQueue.remove();
 
+        Runnable Lift=()->{
 
-
-        Platform.runLater(() -> {//Method of running on the UI thread
 
             gc.clearRect(rect1.getX(),rect1.getY(),rectangleWidth,rect1.getHeight());
             gc.clearRect(rect2.getX(),rect2.getY(),rectangleWidth,rect2.getHeight());//first erases the 2 rectangles to be swapped
@@ -195,9 +198,17 @@ public class VisualMethods {
             gc.fillRect(rect1.getX(),200,rectangleWidth,rect1.getHeight());//redraws them higher
 
             rect2.getText().setY(200-10);
-            gc.setFill(rect2.getColor());
+            if(selectedSort.equals("InsertionSort")){//We want to highlight which rectangle is being checked
+                gc.setFill(Color.rgb(0,255,0,1));
+            }else {
+                gc.setFill(rect1.getColor());
+            }
             rect2.setY(200);
             gc.fillRect(rect2.getX(),200,rectangleWidth,rect2.getHeight());
+        };
+
+        Platform.runLater(() -> {//Method of running on the UI thread
+            executorService.schedule(Lift,600,TimeUnit.MILLISECONDS);
 
         });
 
@@ -209,13 +220,17 @@ public class VisualMethods {
 
         Runnable move= () -> {
 
-            gc.setFill(rect1.getColor());//We are only moving the one rectangle right here so we only need that colour
+            gc.setFill(rect1.getColor());
             gc.clearRect(tempX1[0],200,rectangleWidth,rect1.getHeight());//clearing
             tempX1[0] = tempX1[0] +2;//increment right
             gc.fillRect(tempX1[0],200,rectangleWidth,rect1.getHeight());//drawing
             rect1.getText().setX(tempX1[0]+15);
 
-            gc.setFill(rect2.getColor());//We are only moving the one rectangle left here so we only need that colour
+            if(selectedSort.equals("InsertionSort")){//We want to highlight which rectangle is being checked
+                gc.setFill(Color.rgb(0,255,0,1));
+            }else {
+                gc.setFill(rect1.getColor());
+            }
             gc.clearRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
             tempX2[0] = tempX2[0] -2;//increment left
             gc.fillRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
@@ -223,10 +238,12 @@ public class VisualMethods {
 
             if(storeX2<=tempX1[0]){
                 executorService.shutdown();
+
                 gc.clearRect(tempX1[0],200,rectangleWidth,rect1.getHeight());
                 rect1.setX(storeX2);
                 rect1.setY(canvas.getHeight()-rect1.getHeight());//Places the rectangle back on the base
                 rect1.getText().setY(rect1.getY()-10);
+                rect1.getText().setX(rect1.getX()+20);
                 gc.setFill(rect1.getColor());
                 gc.fillRect(rect1.getX(),rect1.getY(),rectangleWidth,rect1.getHeight());
 
@@ -235,6 +252,7 @@ public class VisualMethods {
                 rect2.setX(storeX1);
                 rect2.setY(canvas.getHeight()-rect2.getHeight());//Places the rectangle back on the base
                 rect2.getText().setY(rect2.getY()-10);
+                rect2.getText().setX(rect2.getX()+20);
                 gc.setFill(rect2.getColor());
                 gc.fillRect(rect2.getX(),rect2.getY(),rectangleWidth,rect2.getHeight());
 
@@ -242,7 +260,7 @@ public class VisualMethods {
                 showSwaps();//recursively does the next set of swaps
 
             }
-           // repaint(rect1,rect2);//repaints all the required the rectangles as we sometimes draw over them
+            repaint(rect1,rect2);//repaints all the required the rectangles as we sometimes draw over them
 
 
         };
@@ -261,7 +279,9 @@ public class VisualMethods {
     }
 
     public void beginSwaps(){
+
         config=new Config(group);
+        selectedSort=Algorithms.getSelectedSort();
         config.startTimer();//begins the timer here
         Platform.runLater(() -> {//Method of running on the UI thread
           config.setTimeOnScreen();
