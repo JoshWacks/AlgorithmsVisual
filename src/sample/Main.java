@@ -3,6 +3,8 @@
 // (powered by Fernflower decompiler)
 //
 
+
+//TODO add a feature to check the time comparison with the same data set
 package sample;
 
 import javafx.application.Application;
@@ -46,29 +48,29 @@ public class Main extends Application {
 
         vm = new VisualMethods(width, height,group);
         vm.initialRectangles();
-        rectanglesArrayList=vm.getRectangles();
-        Canvas canvas=vm.getCanvas();
+        rectanglesArrayList= VisualMethods.getRectangles();
+        Canvas canvas= VisualMethods.getCanvas();
 
         alg=new Algorithms();
 
         group.getChildren().add(canvas);
-
-
 
         Scene scene = new Scene(group, width, height);
         scene.setFill(Color.BLACK);
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        alg.insertionSort();
-        Algorithms.setSelectedSort("InsertionSort");
+        alg.selectionSort();
+        VisualMethods.setSelectedSort("SelectionSort");
+
+//        alg.insertionSort();
+//        VisualMethods.setSelectedSort("InsertionSort");
 
         vm.beginSwaps();
 
 
-
-
     }
+
     public static void main(String[] args) {
         launch(args);
     }

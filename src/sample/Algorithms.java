@@ -3,7 +3,7 @@ package sample;
 public class Algorithms extends VisualMethods {
 
     private final int arrLength;
-    private static String selectedSort;//variable to declare which sort has been selected
+
 
     public Algorithms(){
 
@@ -11,12 +11,11 @@ public class Algorithms extends VisualMethods {
 
     }
 
-    public static String getSelectedSort() {
-        return selectedSort;
-    }
-
-    public static void setSelectedSort(String selectedSort) {
-        Algorithms.selectedSort = selectedSort;
+    public void displayNums(){
+        for(SortingRectangles sr:rectanglesArrayList){
+            System.out.print(sr.getHeight()+" ");
+        }
+        System.out.println();
     }
 
     public void bubbleSort(){
@@ -60,11 +59,29 @@ public class Algorithms extends VisualMethods {
         }
     }
 
+    public void selectionSort(){
+        int posMinElement;//stores the postion of the smallest element in the unsorted array
+        SortingRectangles temp;
 
-    public void displayNums(){
-        for(SortingRectangles sr:rectanglesArrayList){
-            System.out.print(sr.getHeight()+" ");
+        for(int i=0;i<arrLength-1;i++){
+            posMinElement=i;
+            for(int j=i+1;j<arrLength;j++){//We only want to loop through the unsorted array, that's way j=i+1
+                if(rectanglesArrayList.get(j).getHeight()<rectanglesArrayList.get(posMinElement).getHeight()){
+                    posMinElement=j;
+                }
+            }
+
+            if(posMinElement!=i) {//We only want to swap if it is a smaller element,still works without if but more efficient and only want to show swap if there is one
+                sortingRectanglesQueue.add(rectanglesArrayList.get(i));
+                sortingRectanglesQueue.add(rectanglesArrayList.get(posMinElement));
+                temp = rectanglesArrayList.get(posMinElement);
+                rectanglesArrayList.set(posMinElement, rectanglesArrayList.get(i));
+                rectanglesArrayList.set(i, temp);
+            }
+
         }
-        System.out.println();
     }
+
+
+
 }

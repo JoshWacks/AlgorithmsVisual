@@ -33,11 +33,9 @@ public class VisualMethods {
 
     protected static ArrayList<SortingRectangles> rectanglesArrayList = new ArrayList();
     protected static Queue<SortingRectangles> sortingRectanglesQueue=new LinkedList<>();
+    protected static String selectedSort;
 
     private static Config config;
-    private static String selectedSort;
-
-
 
     public VisualMethods(double width, double height,Group gr) {
         canvas = new Canvas(width, height);
@@ -50,7 +48,6 @@ public class VisualMethods {
     public VisualMethods(){
 
     }
-
 
     public static Canvas getCanvas() {
         return canvas;
@@ -90,6 +87,10 @@ public class VisualMethods {
 
     public static void setRectangleWidth(double rectangleWidth) {
         VisualMethods.rectangleWidth = rectangleWidth;
+    }
+
+    public static void setSelectedSort(String selectedSort) {
+        VisualMethods.selectedSort = selectedSort;
     }
 
     public void initialRectangles() {
@@ -175,10 +176,74 @@ public class VisualMethods {
         }
     }
 
+    //TODO try and create a method to clear and redraw rectangles efficiently
+
+    private void liftRectangles(SortingRectangles rect1,SortingRectangles rect2){//Method to lift the rectangles
+
+        gc.clearRect(rect1.getX(),rect1.getY(),rectangleWidth,rect1.getHeight());
+        gc.clearRect(rect2.getX(),rect2.getY(),rectangleWidth,rect2.getHeight());//first erases the 2 rectangles to be swapped
+
+        rect1.getText().setY(200-10);
+        gc.setFill(rect1.getColor());
+        rect1.setY(200);
+        gc.fillRect(rect1.getX(),200,rectangleWidth,rect1.getHeight());//redraws them higher
+
+        rect2.getText().setY(200-10);
+        if(selectedSort.equals("InsertionSort")||selectedSort.equals("SelectionSort")){//We want to highlight which rectangle is being checked
+            gc.setFill(Color.rgb(0,255,0,1));
+        }else {
+            gc.setFill(rect2.getColor());
+        }
+        rect2.setY(200);
+        gc.fillRect(rect2.getX(),200,rectangleWidth,rect2.getHeight());
+    }
+
+    private void horzRectangles(SortingRectangles rect1,SortingRectangles rect2,double[] tempX1,double[] tempX2){//Method to control the horizontal movement of both rectangles
+
+        gc.setFill(rect1.getColor());
+        gc.clearRect(tempX1[0],200,rectangleWidth,rect1.getHeight());//clearing
+        tempX1[0] = tempX1[0] +4;//increment right
+        gc.fillRect(tempX1[0],200,rectangleWidth,rect1.getHeight());//drawing
+        rect1.getText().setX(tempX1[0]+15);
+
+        if(selectedSort.equals("InsertionSort")||selectedSort.equals("SelectionSort")){//We want to highlight which rectangle is being checked on insertionSort
+            gc.setFill(Color.rgb(0,255,0,1));
+        }else {
+            gc.setFill(rect2.getColor());
+        }
+
+        gc.clearRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
+        tempX2[0] = tempX2[0] -4;//increment left
+        gc.fillRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
+        rect2.getText().setX(tempX2[0]+15);
+    }
+
+    private void dropRectangles(SortingRectangles rect1,SortingRectangles rect2,double[] tempX1,double[] tempX2,double storeX1,double storeX2){//Method to drop the rectangles
+        gc.clearRect(tempX1[0],200,rectangleWidth,rect1.getHeight());
+        rect1.setX(storeX2);
+        rect1.setY(canvas.getHeight()-rect1.getHeight());//Places the rectangle back on the base
+        rect1.getText().setY(rect1.getY()-10);
+        rect1.getText().setX(rect1.getX()+20);
+        gc.setFill(rect1.getColor());
+        gc.fillRect(rect1.getX(),rect1.getY(),rectangleWidth,rect1.getHeight());
+
+
+        gc.clearRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
+        rect2.setX(storeX1);
+        rect2.setY(canvas.getHeight()-rect2.getHeight());//Places the rectangle back on the base
+        rect2.getText().setY(rect2.getY()-10);
+        rect2.getText().setX(rect2.getX()+20);
+        gc.setFill(rect2.getColor());
+        gc.fillRect(rect2.getX(),rect2.getY(),rectangleWidth,rect2.getHeight());
+
+    }
+
+
     private void showSwaps(){
         //TODO add a slider to control the speed of the swaps
 
         final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+
         if(sortingRectanglesQueue.size()==0){//we are done sorting
             executorService.shutdown();
             config.stopTimer();
@@ -187,24 +252,7 @@ public class VisualMethods {
         SortingRectangles rect2=sortingRectanglesQueue.remove();
 
         Runnable Lift=()->{
-
-
-            gc.clearRect(rect1.getX(),rect1.getY(),rectangleWidth,rect1.getHeight());
-            gc.clearRect(rect2.getX(),rect2.getY(),rectangleWidth,rect2.getHeight());//first erases the 2 rectangles to be swapped
-
-            rect1.getText().setY(200-10);
-            gc.setFill(rect1.getColor());
-            rect1.setY(200);
-            gc.fillRect(rect1.getX(),200,rectangleWidth,rect1.getHeight());//redraws them higher
-
-            rect2.getText().setY(200-10);
-            if(selectedSort.equals("InsertionSort")){//We want to highlight which rectangle is being checked
-                gc.setFill(Color.rgb(0,255,0,1));
-            }else {
-                gc.setFill(rect1.getColor());
-            }
-            rect2.setY(200);
-            gc.fillRect(rect2.getX(),200,rectangleWidth,rect2.getHeight());
+            liftRectangles(rect1,rect2);
         };
 
         Platform.runLater(() -> {//Method of running on the UI thread
@@ -219,69 +267,35 @@ public class VisualMethods {
         final double[] tempX2 = {storeX2};
 
         Runnable move= () -> {
+            horzRectangles(rect1,rect2,tempX1,tempX2);
 
-            gc.setFill(rect1.getColor());
-            gc.clearRect(tempX1[0],200,rectangleWidth,rect1.getHeight());//clearing
-            tempX1[0] = tempX1[0] +2;//increment right
-            gc.fillRect(tempX1[0],200,rectangleWidth,rect1.getHeight());//drawing
-            rect1.getText().setX(tempX1[0]+15);
-
-            if(selectedSort.equals("InsertionSort")){//We want to highlight which rectangle is being checked
-                gc.setFill(Color.rgb(0,255,0,1));
-            }else {
-                gc.setFill(rect1.getColor());
-            }
-            gc.clearRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
-            tempX2[0] = tempX2[0] -2;//increment left
-            gc.fillRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
-            rect2.getText().setX(tempX2[0]+15);
-
-            if(storeX2<=tempX1[0]){
+            if(storeX2<=tempX1[0]&&tempX2[0]<=storeX1){//Both have reached their correct place
                 executorService.shutdown();
 
-                gc.clearRect(tempX1[0],200,rectangleWidth,rect1.getHeight());
-                rect1.setX(storeX2);
-                rect1.setY(canvas.getHeight()-rect1.getHeight());//Places the rectangle back on the base
-                rect1.getText().setY(rect1.getY()-10);
-                rect1.getText().setX(rect1.getX()+20);
-                gc.setFill(rect1.getColor());
-                gc.fillRect(rect1.getX(),rect1.getY(),rectangleWidth,rect1.getHeight());
-
-
-                gc.clearRect(tempX2[0],200,rectangleWidth,rect2.getHeight());
-                rect2.setX(storeX1);
-                rect2.setY(canvas.getHeight()-rect2.getHeight());//Places the rectangle back on the base
-                rect2.getText().setY(rect2.getY()-10);
-                rect2.getText().setX(rect2.getX()+20);
-                gc.setFill(rect2.getColor());
-                gc.fillRect(rect2.getX(),rect2.getY(),rectangleWidth,rect2.getHeight());
+            dropRectangles(rect1,rect2,tempX1,tempX2,storeX1,storeX2);
 
                 repaintAll();//repaints all to remove any weird paint changes
                 showSwaps();//recursively does the next set of swaps
 
             }
-            repaint(rect1,rect2);//repaints all the required the rectangles as we sometimes draw over them
+            if(!selectedSort.equals("BubbleSort")) {
+                repaint(rect1, rect2);//repaints all the required the rectangles as we sometimes draw over them
+            }
 
 
         };
 
         Platform.runLater(() -> {//Method of running on the UI thread
-            executorService.scheduleAtFixedRate(move, 1000, 25, TimeUnit.MILLISECONDS);//every 30 milliseconds these methods are run
+            executorService.scheduleAtFixedRate(move, 1000, 30, TimeUnit.MILLISECONDS);//every 25 milliseconds these methods are run
 
         });
-        int pos1=rectanglesArrayList.indexOf(rect1);
-        int pos2=rectanglesArrayList.indexOf(rect2);
-        SortingRectangles temp=rectanglesArrayList.get(pos1);
-        rectanglesArrayList.set(pos1,rect2);
-        rectanglesArrayList.set(pos2,temp);//Performs the actual swap in the array
-
 
     }
 
     public void beginSwaps(){
 
         config=new Config(group);
-        selectedSort=Algorithms.getSelectedSort();
+
         config.startTimer();//begins the timer here
         Platform.runLater(() -> {//Method of running on the UI thread
           config.setTimeOnScreen();
