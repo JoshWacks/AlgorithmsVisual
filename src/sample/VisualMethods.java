@@ -12,7 +12,6 @@ import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javafx.application.Platform;
 import javafx.scene.Group;
@@ -33,7 +32,7 @@ public class VisualMethods {
 
     protected static ArrayList<SortingRectangles> rectanglesArrayList = new ArrayList();
     protected static Queue<SortingRectangles> sortingRectanglesQueue=new LinkedList<>();
-    protected static String selectedSort;
+    protected static String selectedSort="";
 
     private static Config config;
 
