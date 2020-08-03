@@ -113,7 +113,7 @@ public class VisualMethods {
             text.setText(randomHeight+"");
             text.setTextAlignment(TextAlignment.JUSTIFY);
             text.setFont(new Font(18));
-            text.setX(rect.getX()+(rectangleWidth/2.0)-10);
+            text.setX(rect.getX()+15);
             text.setY(rect.getY()-10);
 
 
@@ -130,8 +130,6 @@ public class VisualMethods {
         }
 
     }
-
-
 
     private Color getAColor() {
         Random random = new Random();
@@ -170,7 +168,7 @@ public class VisualMethods {
             gc.fillRect(r.getX(), r.getY(), r.getWidth(), r.getHeight());//repaints that rectangle
 
             Text text=r.getText();
-            text.setX(r.getX()+(rectangleWidth/2.0)-8);
+            text.setX(r.getX()+15);
             text.setY(r.getY()-10);//sets the text in their correct position as it sometimes floats off, may be because of bufferoverflow exception
 
         }
@@ -223,7 +221,7 @@ public class VisualMethods {
         rect1.setX(storeX2);
         rect1.setY(canvas.getHeight()-rect1.getHeight());//Places the rectangle back on the base
         rect1.getText().setY(rect1.getY()-10);
-        rect1.getText().setX(rect1.getX()+20);
+        rect1.getText().setX(rect1.getX()+15);
         gc.setFill(rect1.getColor());
         gc.fillRect(rect1.getX(),rect1.getY(),rectangleWidth,rect1.getHeight());
 
@@ -232,7 +230,7 @@ public class VisualMethods {
         rect2.setX(storeX1);
         rect2.setY(canvas.getHeight()-rect2.getHeight());//Places the rectangle back on the base
         rect2.getText().setY(rect2.getY()-10);
-        rect2.getText().setX(rect2.getX()+20);
+        rect2.getText().setX(rect2.getX()+15);
         gc.setFill(rect2.getColor());
         gc.fillRect(rect2.getX(),rect2.getY(),rectangleWidth,rect2.getHeight());
 
@@ -251,9 +249,7 @@ public class VisualMethods {
         SortingRectangles rect1=sortingRectanglesQueue.remove();
         SortingRectangles rect2=sortingRectanglesQueue.remove();
 
-        Runnable Lift=()->{
-            liftRectangles(rect1,rect2);
-        };
+        Runnable Lift=()-> liftRectangles(rect1,rect2);
 
         Platform.runLater(() -> {//Method of running on the UI thread
             executorService.schedule(Lift,600,TimeUnit.MILLISECONDS);
@@ -272,7 +268,7 @@ public class VisualMethods {
             if(storeX2<=tempX1[0]&&tempX2[0]<=storeX1){//Both have reached their correct place
                 executorService.shutdown();
 
-            dropRectangles(rect1,rect2,tempX1,tempX2,storeX1,storeX2);
+                dropRectangles(rect1,rect2,tempX1,tempX2,storeX1,storeX2);//Places the rectangles back on the base
 
                 repaintAll();//repaints all to remove any weird paint changes
                 showSwaps();//recursively does the next set of swaps

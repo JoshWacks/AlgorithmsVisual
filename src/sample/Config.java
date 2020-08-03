@@ -26,18 +26,19 @@ public class Config {
         Text label=new Text(20,50,"Time elapsed (hh:mm:ss:ms)");
         label.setFill(Color.WHITE);
         label.setFont(new Font(22));
-        gr.getChildren().add(label);
+        group.getChildren().add(label);
 
         timer.setX(20);
         timer.setY(90);
         timer.setFill(Color.ORANGERED);
         timer.setFont(new Font(22));
-        gr.getChildren().add(timer);
+        group.getChildren().add(timer);
     }
 
     public void startTimer(){
         startTime=System.currentTimeMillis();
     }
+
     public void stopTimer(){
         //TODO make a system of keeping track of all the different times
         executorService.shutdown();
@@ -61,7 +62,7 @@ public class Config {
 
         Platform.runLater(() -> {//Method of running on the UI thread
             executorService.scheduleAtFixedRate(
-                    setTime, 0, 100, TimeUnit.MILLISECONDS);//every 30 milliseconds these methods are run
+                    setTime, 0, 100, TimeUnit.MILLISECONDS);//every 100 milliseconds these it rewrites the time on screen
 
         });
 

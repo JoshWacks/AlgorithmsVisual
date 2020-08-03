@@ -11,28 +11,17 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Timer;
 
 public class Main extends Application {
     private static double width = 0.0D;
     private static double height = 0.0D;
     private static VisualMethods vm;
-    private static ArrayList<SortingRectangles> rectanglesArrayList = new ArrayList();
     private static Algorithms alg;
 
 
@@ -48,7 +37,7 @@ public class Main extends Application {
 
         vm = new VisualMethods(width, height,group);
         vm.initialRectangles();
-        rectanglesArrayList= VisualMethods.getRectangles();
+
         Canvas canvas= VisualMethods.getCanvas();
 
         alg=new Algorithms();
@@ -60,13 +49,22 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        alg.selectionSort();
-        VisualMethods.setSelectedSort("SelectionSort");
-
+//        alg.selectionSort();
+//        VisualMethods.setSelectedSort("SelectionSort");
+//
 //        alg.insertionSort();
 //        VisualMethods.setSelectedSort("InsertionSort");
 
+//        alg.bubbleSort();
+//        VisualMethods.setSelectedSort("BubbleSort");
+
+        alg.callQuickSort();
+        VisualMethods.setSelectedSort("QuickSort");
+
+
         vm.beginSwaps();
+//
+
 
 
     }
