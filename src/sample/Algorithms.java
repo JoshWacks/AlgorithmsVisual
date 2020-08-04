@@ -81,12 +81,6 @@ public class Algorithms extends VisualMethods {
             }
 
             if(posMinElement!=i) {//We only want to swap if it is a smaller element,still works without if but more efficient and only want to show swap if there is one
-//                sortingRectanglesQueue.add(rectanglesArrayList.get(i));
-//                sortingRectanglesQueue.add(rectanglesArrayList.get(posMinElement));
-//                temp = rectanglesArrayList.get(posMinElement);
-//                rectanglesArrayList.set(posMinElement, rectanglesArrayList.get(i));
-//                rectanglesArrayList.set(i, temp);
-
                 swap(i,posMinElement);
             }
 
@@ -95,39 +89,73 @@ public class Algorithms extends VisualMethods {
 
 
 
-    private int getPivot(int low, int high){//function to return a random pivot index within the certain range inclusive
-        Random random=new Random();
-        return random.nextInt((high-low)+1)+low;
-    }
+//    private int getPivot(int low, int high){//function to return a random pivot index within the certain range inclusive
+//        Random random=new Random();
+//        return random.nextInt((high-low)+1)+low;
+//    }
+//
+//    private int partition(int low,int high){
+//        int pivot=getPivot(low,high);
+//        if(pivot!=low){
+//            swap(low,getPivot(low,high));
+//        }
+//
+//        int border=low+1;
+//
+//        for (int i=border;i<=high;i++){
+//            if(rectanglesArrayList.get(i).getHeight()<rectanglesArrayList.get(low).getHeight()){
+//                swap(i,border++);
+//            }
+//        }
+//        if(low!=border-1){
+//            swap(low,border-1);
+//        }
+//
+//        return  border-1;
+//    }
+//
+//
+//
+//    private void quickSort(int low,int high){
+//
+//        int partIndex;
+//
+//        if(low<high+1){//the start index is less than the end we still need to sort
+//            partIndex=partition(low,high);//The partitioning Index
+//            quickSort(low,partIndex-1);
+//            quickSort(partIndex+1,high);//We sort the 2 sub-arrays recursively
+//        }
+//
+//    }
 
-    private int partition(int low,int high){
-        swap(low,getPivot(low,high));
-        int border=low+1;
+    private int partition(int low,int high)
+    {
+        SortingRectangles pivot=rectanglesArrayList.get(high);
 
-        for (int i=border;i<=high;i++){
-            if(rectanglesArrayList.get(i).getHeight()<rectanglesArrayList.get(low).getHeight()){
-                swap(i,border++);
+        int i=low-1;
+
+        for(int j=low;j<high;j++){
+            if(rectanglesArrayList.get(j).getHeight()<=pivot.getHeight()){
+                i++;
+                swap(i,j);
             }
         }
-        swap(low,border-1);
-        return  border-1;
+        swap(i+1,high);
+        return (i+1);
+
     }
 
-
-
     private void quickSort(int low,int high){
+        if(low<high){
+            int pi=partition(low,high);
 
-        int partIndex;
-
-        if(low<high+1){//the start index is less than the end we still need to sort
-            partIndex=partition(low,high);//The partitioning Index
-            quickSort(low,partIndex-1);
-            quickSort(partIndex+1,high);//We sort the 2 sub-arrays recursively
+            quickSort(low,pi-1);
+            quickSort(pi+1,high);
         }
-
     }
 
     public void callQuickSort(){
+
         quickSort(0,arrLength-1);
     }
 

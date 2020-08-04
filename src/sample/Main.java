@@ -83,6 +83,8 @@ public class Main extends Application {
                     }else{
                         JOptionPane.showMessageDialog(null,"There is already a sort selected");
                     }
+                    temp.setBorder(new Border(new BorderStroke(Color.WHITE,
+                            BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(3))));
 
                 });
             }
@@ -97,6 +99,8 @@ public class Main extends Application {
                     }else{
                         JOptionPane.showMessageDialog(null,"There is already a sort selected");
                     }
+                    temp.setBorder(new Border(new BorderStroke(Color.WHITE,
+                            BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(3))));
 
                 });
             }
@@ -111,6 +115,8 @@ public class Main extends Application {
                     }else{
                         JOptionPane.showMessageDialog(null,"There is already a sort selected");
                     }
+                    temp.setBorder(new Border(new BorderStroke(Color.WHITE,
+                            BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(3))));
 
                 });
             }
@@ -125,11 +131,8 @@ public class Main extends Application {
                     }else{
                         JOptionPane.showMessageDialog(null,"There is already a sort selected");
                     }
-
-                    BorderWidths borderWidths=new BorderWidths(3);
-
                     temp.setBorder(new Border(new BorderStroke(Color.WHITE,
-                            BorderStrokeStyle.SOLID, CornerRadii.EMPTY, borderWidths)));
+                            BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(3))));
 
                 });
             }

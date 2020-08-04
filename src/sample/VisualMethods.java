@@ -286,6 +286,7 @@ public class VisualMethods {
         });
 
     }
+    
 
     public void beginSwaps(){
 
